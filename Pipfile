@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+verify_ssl = true
+url = "https://pypi.org/simple"
+
+[packages]
+gunicorn = "*"
+Flask = "*"
+numpy = "*"
+tensorflow = "*"
+keras = "*"
+requests = "*"
+pillow = "*"
+
+[requires]
+python_version = "3.7"
+
+[dev-packages]
+
+[scripts]
+dev = 'python app.py'

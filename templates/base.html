@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <title>Juice=Juice判定器</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/4.1.0/superagent.min.js"></script>
+    <script type="text/javascript" src="./static/face-api.min.js"></script>
+    <style>
+      #container {
+        width: 320px;
+        margin: 60px auto 0 auto;
+      }
+      #previewCanvas {
+        max-width: 250px;
+        max-height: 250px;
+      }
+      .canvases {
+        text-align: center;
+      }
+      p.label-name.first {
+        font-weight: bold;
+      }
+      .detail {
+        text-align: center;
+      }
+      .loading {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    {% block content %}
+    {% endblock %}
+    <script type="text/javascript" src="./static/index.js"></script>
+  </body>
+</html>
