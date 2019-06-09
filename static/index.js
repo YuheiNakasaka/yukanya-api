@@ -29,7 +29,7 @@ const app = new Vue({
     predict: function(imageFile = './static/sample.jpg') {
       const vm = this
       vm.loading = true
-      setupCanvas(imageFile, 64, 64).then((resp) => {
+      setupCanvas(imageFile, 128, 128).then((resp) => {
         if (resp !== false) {
           const b64 = resp.canvas.toDataURL("image/png").replace(/data:image\/png;base64,/, '');
           const formData = new FormData();
