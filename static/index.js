@@ -26,6 +26,13 @@ const app = new Vue({
         reader.readAsDataURL(files[0]);
       }
     },
+    downloadCanvasImage: function() {
+      const canvas = document.querySelector('#mainCanvas')
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = parseInt((new Date()).getTime()/1000) + "_0_0.png";
+      link.click();
+    },
     predict: function(imageFile = './static/sample.jpg') {
       const vm = this
       vm.loading = true

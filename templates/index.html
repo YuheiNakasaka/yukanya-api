@@ -4,8 +4,8 @@
     <div id="container">
       <div class="main">
         <div class="canvases">
-          <canvas id="mainCanvas"></canvas>
           <canvas id="previewCanvas"></canvas>
+          <canvas id="mainCanvas" @click="downloadCanvasImage"></canvas>
         </div>
 
         <div class="detail" v-if="loading === false">
