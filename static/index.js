@@ -6,25 +6,36 @@ const app = new Vue({
     loading: true,
   },
   mounted: function() {
+    const vm = this;
     this.predict()
+
+    const elm = document.querySelector('body');  
+    elm.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    });
+    elm.addEventListener('drop', (e) => {
+        e.preventDefault();
+        vm.fileReader(e.dataTransfer.files)
+    });
   },
   methods: {
     onFileChange: function(e) {
-      const vm = this
-      if (e.target) {
-        const files = e.target.files;
-        if (!files) return;
-        if (!files[0].type.match(/image.*/)) {
-          alert('画像ファイルをアップロードしてください')
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = async () => {
-          if (!reader.result || reader.result instanceof ArrayBuffer) return;
-          vm.predict(reader.result)
-        };
-        reader.readAsDataURL(files[0]);
+      if (e.target) this.fileReader(e.target.files)
+    },
+    fileReader: function(files) {
+      const vm = this;
+      if (!files) return;
+      if (!files[0].type.match(/image.*/)) {
+        alert('画像ファイルをアップロードしてください')
+        return;
       }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        if (!reader.result || reader.result instanceof ArrayBuffer) return;
+        vm.predict(reader.result)
+      };
+      reader.readAsDataURL(files[0]);
     },
     downloadCanvasImage: function() {
       const canvas = document.querySelector('#mainCanvas')
@@ -75,10 +86,8 @@ async function faceDetect(canvas) {
 
 function setupCanvas(imgUrl, resizeW, resizeH) {
   const canvas = document.querySelector('#mainCanvas');
-  const prevCanvas = document.querySelector('#previewCanvas');
   if (!canvas) return null;
   const context = canvas.getContext("2d");
-  const prevContext = prevCanvas.getContext("2d");
   if (!context) return null;
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -86,16 +95,12 @@ function setupCanvas(imgUrl, resizeW, resizeH) {
     img.src = imgUrl;
     img.onload = async () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
-      prevContext.clearRect(0, 0, prevCanvas.width, prevCanvas.height);
       const detections = await faceDetect(img)
       if (!detections) {
         resolve(false)
       } else {
         canvas.width = resizeW;
         canvas.height = resizeH;
-        prevCanvas.width = img.width;
-        prevCanvas.height = img.height;
-        prevContext.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width, img.height)
         const squareW = detections.box.width > detections.box.height ? detections.box.width : detections.box.height
         const squareH = detections.box.width > detections.box.height ? detections.box.width : detections.box.height
         context.drawImage(img, detections.box.x, detections.box.y, squareW, squareH, 0, 0, resizeW, resizeH);
