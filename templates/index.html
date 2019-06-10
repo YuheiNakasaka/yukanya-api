@@ -4,7 +4,7 @@
   <div id="container">
     <div class="main">
       <div class="canvases">
-        <canvas id="mainCanvas" @click="downloadCanvasImage"></canvas>
+        <canvas class="mainCanvas" @click="downloadCanvasImage" v-for="i in canvases"></canvas>
       </div>
       <div class="detail" v-if="loading === false">
         <div class="labels">
