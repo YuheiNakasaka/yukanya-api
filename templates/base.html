@@ -1,13 +1,31 @@
 <html>
   <head>
     <title>Juice=Juice判定器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/4.1.0/superagent.min.js"></script>
     <script type="text/javascript" src="./static/face-api.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
+      body {
+        margin: 0;
+        background-color: #FFF8E1;
+      }
       #container {
-        width: 320px;
-        margin: 30px auto 0 auto;
+        margin: 0 auto 0 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 95vh;
+      }
+      .top {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 2px 20px;
+        color: #FFF8E1;
+        background-color:#2979FF;
+      }
+      .main {
+        margin-top: 20px;
       }
       .mainCanvas {
         max-width: 128px;
@@ -22,6 +40,35 @@
         text-align: center;
       }
       .canvas-container {
+        margin: 20px 0;
+      }
+      .input-file-label {
+        font-size: 1.25em;
+        font-weight: 700;
+        color: #FFF8E1;
+        background-color:#2979FF;
+        display: inline-block;
+        padding: 16px 30px;
+        border-bottom: solid 4px #627295;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .input-file-label:active {
+        -webkit-transform: translateY(4px);
+        transform: translateY(4px);
+        border-bottom: none;
+      }
+      .input-file-label span {
+        margin-left: 10px;
+        vertical-align: text-bottom;
+      }
+      .input-file-label input {
+        display: none;
+      }
+      .input-file-label p {
+        margin: 0;
+        font-size: 11px;
+        color: #f1f1f1;
       }
       p.label-name.first {
         font-weight: bold;
@@ -31,6 +78,18 @@
       }
       .loading {
         text-align: center;
+      }
+      #footer {
+        text-align: center;
+        margin-top: 0;
+      }
+      @media only screen and (max-width: 767px) {
+        h1 {
+          font-size: 1.8em;
+        }
+        .input-file-label {
+          margin: 0 20px;
+        }
       }
     </style>
   </head>

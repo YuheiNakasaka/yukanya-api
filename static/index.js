@@ -8,7 +8,7 @@ Vue.component('prediction-component', {
   props: ['loading', 'detection', 'imgurl'],
   template: `
   <div>
-    <canvas class="mainCanvas" ref="faceCanvas" @click="downloadCanvasImage"></canvas>
+    <canvas class="mainCanvas" ref="faceCanvas" @click="downloadCanvasImage" v-show="!loading"></canvas>
     <div class="detail" v-if="loading === false">
       <div class="labels">
         <div v-for="(pred, index) in predictions">
