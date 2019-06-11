@@ -4,19 +4,14 @@
   <div id="container">
     <div class="main">
       <div class="canvases">
-        <canvas class="mainCanvas" @click="downloadCanvasImage" v-for="i in canvases"></canvas>
-      </div>
-      <div class="detail" v-if="loading === false">
-        <div class="labels">
-          <div v-for="(pred, index) in predictions">
-            <p class="label-name" :class="index === 0 ? 'first' : ''">[[ pred[0] ]]: [[ pred[1] ]]%</p>
-          </div>
+        <div class="canvas-container" v-for="detection in detections">
+          <prediction-component :loading="loading" :detection="detection" :imgurl="imgUrl"></prediction-component>
         </div>
-        <div class="meta">
+        <div class="meta" v-if="loading === false">
           <input type="file" @change="onFileChange" />
         </div>
       </div>
-      <div class="loading" v-else>
+      <div class="loading" v-if="loading === true">
         <p>読み込み中...</p>
       </div>
     </div>
