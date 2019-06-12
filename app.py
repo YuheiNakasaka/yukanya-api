@@ -10,10 +10,12 @@ from PIL  import Image
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 import tensorflow as tf
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.debug = False
+CORS(app)
 
 model = load_model('YukanyaModel_vgg_all.h5')
 graph = tf.get_default_graph()
