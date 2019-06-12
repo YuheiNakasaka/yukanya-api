@@ -85,12 +85,10 @@ const app = new Vue({
   data: {
     imgUrl: '',
     detections: [],
-    loading: true,
+    loading: false,
   },
   mounted: function() {
     const vm = this;
-    this.faceRendering()
-
     const elm = document.querySelector('body');  
     elm.addEventListener('dragover', (e) => {
         e.preventDefault();

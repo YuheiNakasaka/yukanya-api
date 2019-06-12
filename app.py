@@ -13,7 +13,7 @@ import tensorflow as tf
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-app.debug = True
+app.debug = False
 
 model = load_model('YukanyaModel_vgg_all.h5')
 graph = tf.get_default_graph()
