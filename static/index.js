@@ -44,12 +44,44 @@ Vue.component('prediction-component', {
         if (!canvas) return null;
         const context = canvas.getContext("2d");
         if (!context) return null;
-        canvas.width = 128;
-        canvas.height = 128;
-        const squareW = vm.detection.box.width > vm.detection.box.height ? vm.detection.box.width : vm.detection.box.height
-        const squareH = vm.detection.box.width > vm.detection.box.height ? vm.detection.box.width : vm.detection.box.height
-        context.drawImage(img, vm.detection.box.x, vm.detection.box.y, squareW, squareH, 0, 0, 128, 128);
-        vm.predict()
+        EXIF.getData(img, async () => {
+          const tmpCanvas = document.createElement('canvas')
+          const ctx = tmpCanvas.getContext('2d')
+          let rotate = 0
+          if (EXIF.getAllTags(img).Orientation == 6) {
+            rotate = 90
+          } else if (EXIF.getAllTags(img).Orientation == 3) {
+            rotate = 180
+          } else if (EXIF.getAllTags(img).Orientation == 8) {
+            rotate = 270
+          }
+
+          if (rotate == 90 || rotate == 270) {
+            tmpCanvas.width = img.height;
+            tmpCanvas.height = img.width;
+          } else {
+            tmpCanvas.width = img.width;
+            tmpCanvas.height = img.height;
+          }
+
+          if (rotate && rotate > 0) {
+            ctx.rotate(rotate * Math.PI / 180);
+            if (rotate == 90)
+              ctx.translate(0, -img.height);
+            else if (rotate == 180)
+              ctx.translate(-img.width, -img.height);
+            else if (rotate == 270)
+              ctx.translate(-img.width, 0);
+          }
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+
+          canvas.width = 128;
+          canvas.height = 128;
+          const squareW = vm.detection.box.width > vm.detection.box.height ? vm.detection.box.width : vm.detection.box.height
+          const squareH = vm.detection.box.width > vm.detection.box.height ? vm.detection.box.width : vm.detection.box.height
+          context.drawImage(tmpCanvas, vm.detection.box.x, vm.detection.box.y, squareW, squareH, 0, 0, 128, 128);
+          vm.predict()
+        })
       };
       img.onerror = () => reject(null);
     },
@@ -129,11 +161,42 @@ const app = new Vue({
       const img = new Image();
       img.crossOrigin = "Anonymous";
       img.src = imgUrl;
-      img.onload = async () => {
-        const detections = await vm.faceDetect(img)
-        vm.detections = detections
-        if (detections.length === 0) alert("顔が検出できませんでした");
-        vm.loading = false
+      img.onload = () => {
+        EXIF.getData(img, async () => {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          let rotate = 0
+          if (EXIF.getAllTags(img).Orientation == 6) {
+            rotate = 90
+          } else if (EXIF.getAllTags(img).Orientation == 3) {
+            rotate = 180
+          } else if (EXIF.getAllTags(img).Orientation == 8) {
+            rotate = 270
+          }
+          // Canvasのサイズを指定
+          if (rotate == 90 || rotate == 270) {
+            canvas.width = img.height;
+            canvas.height = img.width;
+          } else {
+            canvas.width = img.width;
+            canvas.height = img.height;
+          }
+          // 画像の回転
+          if (rotate && rotate > 0) {
+            ctx.rotate(rotate * Math.PI / 180);
+            if (rotate == 90)
+              ctx.translate(0, -img.height);
+            else if (rotate == 180)
+              ctx.translate(-img.width, -img.height);
+            else if (rotate == 270)
+              ctx.translate(-img.width, 0);
+          }
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const detections = await vm.faceDetect(canvas)
+          vm.detections = detections
+          if (detections.length === 0) alert("顔が検出できませんでした");
+          vm.loading = false
+        })
       };
       img.onerror = () => reject(null);
     },
