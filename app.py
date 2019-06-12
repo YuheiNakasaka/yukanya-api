@@ -20,10 +20,6 @@ CORS(app)
 model = load_model('YukanyaModel_vgg_all.h5')
 graph = tf.get_default_graph()
 
-@app.route('/', methods=['GET'])
-def index():
-    return render_template("index.html")
-
 @app.route('/', methods=['POST'])
 def predict():
     def member_to_name(i):
