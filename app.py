@@ -50,6 +50,7 @@ CORS(app)
 face_embedding = FaceEmbedding('./models/20180402-114759/20180402-114759.pb')
 f = open('img_facenet.pkl', 'rb')
 data = pickle.load(f)
+
 @app.route('/distance', methods=['POST'])
 def predict_distance():
     # 1以上: 残念ながら別人です。強いて言うならOOに近いかもしれません...
