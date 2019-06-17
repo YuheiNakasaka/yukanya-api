@@ -7,8 +7,6 @@ import base64
 import numpy as np
 from flask import Flask, request, jsonify, render_template
 from PIL  import Image
-from keras.models import load_model
-from keras.preprocessing.image import img_to_array
 import tensorflow as tf
 from flask_cors import CORS
 from face_embeding import FaceEmbedding
@@ -49,35 +47,6 @@ app.config['JSON_AS_ASCII'] = False
 app.debug = False
 CORS(app)
 
-model = load_model('YukanyaModel_vgg_all.h5')
-graph = tf.get_default_graph()
-
-@app.route('/', methods=['POST'])
-def predict():
-    try:
-        img_bytes = io.BytesIO(base64.b64decode(request.form['image']))
-        face_img = Image.open(img_bytes)
-        img_list = np.array([img_to_array(face_img)[:,:,:3] / 255], dtype=np.float32)
-        global graph
-        with graph.as_default():
-            prediction = model.predict(img_list)
-            sorted_results = []
-            for i, score in enumerate(prediction[0]):
-                sorted_results.append([score *  100, index_to_member_name(i)])
-            sorted_results.sort()
-            for result in sorted_results[::-1]:
-                print(result[1] + ': ' + str(result[0]) + '%')
-        response = {
-            'data': sorted_results
-        }
-        return jsonify(response), 200
-    except:
-        response = {
-            'data': []
-        }
-        return jsonify(response), 500
-
-
 @app.route('/distance', methods=['POST'])
 def predict_distance():
     face_embedding = FaceEmbedding('./models/20180402-114759/20180402-114759.pb')
@@ -107,10 +76,12 @@ def predict_distance():
         
         msg = ""
         top1 = top10[0]
-        if top1['score'] < 0.5:
+        if top1['score'] < 0.3:
+            msg += "あなたは「<span style='font-weight: bold;'>" + top1['name'] + "</span>」本人です。紛れもなく本人です。"
+        elif top1['score'] < 0.5:
             msg += "あなたは「<span style='font-weight: bold;'>" + top1['name'] + "</span>」本人ですか？ほとんど区別がつきません。"
-        elif top1['score'] < 0.6:
-            msg += "あなたはほぼ「<span style='font-weight: bold;'>" + top1['name'] + "</span>」顔です。誰に似てるか聞かれたら<span style='font-weight: bold;'>" + top1['name'] + "</span>と答えても問題ないでしょう"
+        elif top1['score'] < 0.55:
+            msg += "あなたは「<span style='font-weight: bold;'>" + top1['name'] + "</span>」顔です。誰に似てるか聞かれたら<span style='font-weight: bold;'>" + top1['name'] + "</span>と答えても問題ないでしょう"
         elif top1['score'] < 0.7:
             msg += "かなり「<span style='font-weight: bold;'>" + top1['name'] +"</span>」に近い顔です。髪型や骨格など大まかな部分が似ています。"
         elif top1['score'] < 0.8:
