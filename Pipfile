@@ -12,6 +12,8 @@ keras = "*"
 requests = "*"
 pillow = "*"
 flask-cors = "*"
+scipy  = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.7"
